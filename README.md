@@ -138,12 +138,10 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 
 ---
 
-### 👤 Author
+### 👥 Authors
 
-**Akash**
+**Akash M**
 - GitHub: [@akash14102006](https://github.com/akash14102006)
-- Project: [Foodlytics AI](https://github.com/akash14102006/Foodlytics-help)
 
-<p align="center">
-  Created with ❤️ and AI by Antigravity
-</p>
+**Buvanraj V**
+- Project: [Foodlytics AI](https://github.com/akash14102006/Foodlytics-help)
