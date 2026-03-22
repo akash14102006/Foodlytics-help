@@ -1,8 +1,11 @@
 import os
 import time
+import re
 import uuid
 import base64
 import httpx
+import google.generativeai as genai
+from config import settings
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form, Request
 from fastapi.responses import JSONResponse
 from PIL import Image
@@ -21,66 +24,43 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 async def detect_food_from_image(image_path: str) -> str:
     """
-    Use AI image recognition to detect food from image.
-    Uses Hugging Face's free food classification model.
+    Use Google Gemini Vision Pro to identify food from image with ultra-high accuracy.
     """
+    if not settings.GEMINI_API_KEY:
+        print("⚠️ GEMINI_API_KEY not set. Using legacy detection.")
+        return None
+
     try:
-        # Read and encode image
-        with open(image_path, "rb") as f:
-            image_bytes = f.read()
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
-        # Use Hugging Face Inference API (free tier)
-        # Model: nateraw/food or google/vit-base-patch16-224
-        API_URL = "https://api-inference.huggingface.co/models/nateraw/food"
+        # Load image
+        img = Image.open(image_path)
         
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                API_URL,
-                headers={"Content-Type": "application/octet-stream"},
-                content=image_bytes
-            )
+        prompt = """
+        Analyze this image and identify the SINGLE main food item shown.
+        If there is no food in the image, return 'Not Food'.
+        If there is food, return ONLY the common name of the food (e.g., 'Pizza', 'Burger', 'Biryani').
+        Do not include any other text or punctuation.
+        """
+        
+        response = model.generate_content([prompt, img])
+        detected_text = response.text.strip().lower()
+
+        if "not food" in detected_text:
+            print(f"🚫 Gemini determined image is not food: {detected_text}")
+            return None
             
-            if response.status_code == 200:
-                results = response.json()
-                if results and len(results) > 0:
-                    # Get top prediction
-                    top_prediction = results[0]
-                    food_label = top_prediction.get("label", "").lower()
-                    confidence = top_prediction.get("score", 0)
-                    
-                    # Clean up the label (remove numbers, underscores)
-                    food_label = food_label.replace("_", " ").strip()
-                    
-                    print(f"🔍 AI Detection: {food_label} (confidence: {confidence:.2%})")
-                    
-                    if confidence > 0.3:  # Only use if reasonably confident
-                        return food_label
+        # Clean the response to get just the food name
+        food_match = re.search(r"([a-z\s]+)", detected_text)
+        if food_match:
+            name = food_match.group(1).split('\n')[0].strip()
+            print(f"💎 Gemini Pro Detection: {name}")
+            return name
             
-            # Fallback: try another model
-            API_URL_2 = "https://api-inference.huggingface.co/models/Kaludi/food-category-classification-v2.0"
-            response2 = await client.post(
-                API_URL_2,
-                headers={"Content-Type": "application/octet-stream"},
-                content=image_bytes
-            )
-            
-            if response2.status_code == 200:
-                results2 = response2.json()
-                if results2 and len(results2) > 0:
-                    top_prediction = results2[0]
-                    food_label = top_prediction.get("label", "").lower()
-                    confidence = top_prediction.get("score", 0)
-                    food_label = food_label.replace("_", " ").strip()
-                    
-                    print(f"🔍 AI Detection (Model 2): {food_label} (confidence: {confidence:.2%})")
-                    
-                    if confidence > 0.3:
-                        return food_label
-                    
     except Exception as e:
-        print(f"⚠️ AI detection failed: {e}")
+        print(f"⚠️ Gemini detection failed: {e}")
     
-    # If AI fails, return None so we can ask user
     return None
 
 @router.post("/analyze", response_model=FoodAnalysisResult)

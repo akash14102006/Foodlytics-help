@@ -4,6 +4,7 @@ from typing import List
 class Settings(BaseSettings):
     NUTRITIONIX_APP_ID: str = ""
     NUTRITIONIX_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
     MONGODB_URI: str = "mongodb://localhost:27017/nutrivision"
     JWT_SECRET: str = "change_this_secret"
     JWT_ALGORITHM: str = "HS256"
