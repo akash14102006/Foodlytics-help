@@ -1,0 +1,63 @@
+Traceback (most recent call last):
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\middleware\cors.py", line 146, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\routing.py", line 762, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\routing.py", line 782, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\starlette\routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\fastapi\routing.py", line 299, in app
+    raise e
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\fastapi\routing.py", line 294, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\fastapi\routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\routes\auth_routes.py", line 23, in register
+    existing = await db.users.find_one({"email": data.email})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\collection.py", line 1506, in find_one
+    for result in cursor.limit(-1):
+                  ^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\cursor.py", line 1264, in next
+    if len(self.__data) or self._refresh():
+                           ^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\cursor.py", line 1155, in _refresh
+    self.__session = self.__collection.database.client._ensure_session()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\mongo_client.py", line 1823, in _ensure_session
+    return self.__start_session(True, causal_consistency=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\mongo_client.py", line 1766, in __start_session
+    self._topology._check_implicit_session_support()
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\topology.py", line 573, in _check_implicit_session_support
+    self._check_session_support()
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\topology.py", line 589, in _check_session_support
+    self._select_servers_loop(
+  File "C:\Users\akash\Downloads\FOOD-26\FOOD-26\backend-api\venv\Lib\site-packages\pymongo\topology.py", line 259, in _select_servers_loop
+    raise ServerSelectionTimeoutError(
+pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 69bffbfbe6c8b32fc9777d7c, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
