@@ -140,8 +140,7 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 
 ### 👥 Authors
 
-**Akash M**
-- GitHub: [@akash14102006](https://github.com/akash14102006)
+- **Akash M** - Main Developer & AI Integration ([@akash14102006](https://github.com/akash14102006))
+- **Buvanraj V** - Core System Architecture & Design
 
-**Buvanraj V**
-- Project: [Foodlytics AI](https://github.com/akash14102006/Foodlytics-help)
+**Project Link:** [Foodlytics AI](https://github.com/akash14102006/Foodlytics-help)
