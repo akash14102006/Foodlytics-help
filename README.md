@@ -141,6 +141,6 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 ### 👥 Authors
 
 - **Akash M** - Main Developer & AI Integration ([@akash14102006](https://github.com/akash14102006))
-- **Buvanraj V** - Core System Architecture & Design
+- **Buvanraj V** - Main Developer & UI/UX Design ([@Buvan-Buddu](https://github.com/Buvan-Buddu))
 
 **Project Link:** [Foodlytics AI](https://github.com/akash14102006/Foodlytics-help)
