@@ -172,7 +172,7 @@ export default function PremiumUploadFood() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {mode === 'camera' ? (
                 <motion.div
                   key="camera"
