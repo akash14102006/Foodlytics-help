@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import {
   LayoutDashboard, Upload, Activity, Utensils,
@@ -35,7 +35,7 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <div className="flex-shrink-0 flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
+            <Link to="/dashboard" className="flex-shrink-0 flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pearl-400 to-pearl-600 flex items-center justify-center text-white shadow-soft">
                 <Leaf size={24} />
               </div>
@@ -44,7 +44,7 @@ export default function Layout() {
                   Nutri<span className="text-pearl-500">Vision</span>
                 </span>
               </div>
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-2">
@@ -136,7 +136,7 @@ export default function Layout() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 15 }}

@@ -66,6 +66,7 @@ class FoodAnalysisResult(BaseModel):
     health_score: float  # 1-10
     nutrition: NutritionInfo
     health_risks: List[HealthRisk] = []
+    ingredients: List[str] = []
     alternatives: List[str] = []
     analysis_time: float
     image_url: Optional[str] = None

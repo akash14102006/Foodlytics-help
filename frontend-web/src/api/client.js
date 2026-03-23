@@ -39,7 +39,7 @@ export const authAPI = {
 export const foodAPI = {
   analyzeImage: (formData) => api.post('/api/food/analyze', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 30000,
+    timeout: 60000, // Increased to 60s for Gemini + Potential cold starts
   }),
   analyzeByName: (name) => api.post(`/api/food/analyze-name?food_name=${encodeURIComponent(name)}`),
   search: (q) => api.get(`/api/food/search?q=${encodeURIComponent(q)}`),

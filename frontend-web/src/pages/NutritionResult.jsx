@@ -66,11 +66,12 @@ export default function NutritionResult() {
 
   const speakResult = () => {
     if (!('speechSynthesis' in window)) { toast.error('Voice not supported in this browser'); return; }
-    const { food_name, nutrition, health_score, category, alternatives } = result;
+    const { food_name, nutrition, health_score, category, alternatives, ingredients } = result;
     const text = `You analyzed ${food_name}. This is classified as ${category} food with a health score of ${health_score} out of 10. 
       It contains ${Math.round(nutrition.calories)} calories, ${nutrition.protein} grams of protein, 
       ${nutrition.carbohydrates} grams of carbohydrates, and ${nutrition.fat} grams of fat.
-      ${alternatives.length ? `Healthier alternatives include: ${alternatives.slice(0, 2).join(' and ')}.` : ''}`;
+      ${ingredients?.length ? `The detected ingredients are: ${ingredients.join(', ')}.` : ''}
+      ${alternatives?.length ? `Healthier alternatives include: ${alternatives.slice(0, 2).join(' and ')}.` : ''}`;
 
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
@@ -178,6 +179,28 @@ export default function NutritionResult() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Ingredients */}
+            <div className="bg-white rounded-[28px] p-6 border border-slate-100 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 font-outfit mb-5 flex items-center gap-2">
+                <Utensils className="text-cyan-500" size={20} /> 
+                Detected Ingredients
+              </h3>
+              
+              {result.ingredients?.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {result.ingredients.map((ing, i) => (
+                    <span key={i} className="px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-xl text-sm font-bold border border-cyan-100 capitalize">
+                      {ing}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-full min-h-[100px] flex flex-col items-center justify-center text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 text-gray-500">
+                   <div className="font-semibold text-sm italic">No specific ingredients identified</div>
+                </div>
+              )}
+            </div>
+
              {/* Health Risks */}
             <div className={`bg-white rounded-[28px] p-6 border ${result.health_risks?.length > 0 ? 'border-rose-100' : 'border-slate-100'} shadow-sm`}>
               <h3 className="text-lg font-bold text-gray-900 font-outfit mb-5 flex items-center gap-2">
@@ -207,32 +230,32 @@ export default function NutritionResult() {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Alternatives */}
-            <div className="bg-white rounded-[28px] p-6 border border-pearl-100 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 font-outfit mb-5 flex items-center gap-2">
-                <Leaf className="text-emerald-500" size={20} /> 
-                Healthier Alternatives
-              </h3>
-              
-              {result.alternatives?.length > 0 ? (
-                <ul className="space-y-3">
-                  {result.alternatives.map((alt, i) => (
-                    <li key={i} className="flex items-center gap-3 p-3 lg:p-4 rounded-2xl border border-emerald-100 bg-emerald-50/50">
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                         <CheckCircle size={16} />
-                      </div>
-                      <span className="text-sm font-semibold text-gray-800">{alt}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                 <div className="h-full min-h-[120px] flex flex-col items-center justify-center text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 text-gray-500">
-                   <ThumbsUp size={32} className="mb-2" />
-                   <div className="font-semibold text-sm">This is already a great choice!</div>
-                </div>
-              )}
-            </div>
+          {/* Alternatives */}
+          <div className="bg-white rounded-[28px] p-6 border border-pearl-100 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 font-outfit mb-5 flex items-center gap-2">
+              <Leaf className="text-emerald-500" size={20} /> 
+              Healthier Alternatives
+            </h3>
+            
+            {result.alternatives?.length > 0 ? (
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {result.alternatives.map((alt, i) => (
+                  <li key={i} className="flex items-center gap-3 p-3 lg:p-4 rounded-2xl border border-emerald-100 bg-emerald-50/50">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                       <CheckCircle size={16} />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-800">{alt}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+               <div className="h-full min-h-[100px] flex flex-col items-center justify-center text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 text-gray-500">
+                 <ThumbsUp size={32} className="mb-2" />
+                 <div className="font-semibold text-sm">This is already a great choice!</div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
