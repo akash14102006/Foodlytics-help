@@ -35,47 +35,69 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 async def detect_food_from_image(image_bytes: bytes) -> dict:
-    """Extract food name and ingredients from image bytes using Gemini Flash (JSON mode)."""
+    """Extract food name and ingredients using a smart fallback model picker."""
     if not settings.GEMINI_API_KEY:
         logger.warning("GEMINI_API_KEY not set. Vision detection disabled.")
         return {"name": "unknown", "ingredients": []}
 
-    try:
-        # Flash 1.5 is extremely fast and effective for food
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
-        # Prepare image blob
-        image_part = {
-            "mime_type": "image/jpeg",
-            "data": image_bytes
-        }
-        
-        prompt = """
-        Identify the primary food item in this image.
-        Return a JSON object with:
-        1. "food": Concise food name (e.g. "Strawberry Bowl", "Cheeseburger").
-        2. "ingredients": List of 5-10 visible or likely ingredients.
-        
-        If it's not food, return {"food": "unknown", "ingredients": []}.
-        """
-        
-        # Gemini 1.5 native JSON mode
-        response = await model.generate_content_async(
-            [prompt, image_part],
-            generation_config={"response_mime_type": "application/json"}
-        )
-        
-        if response.text:
-            data = json.loads(response.text.strip())
-            food_name = data.get("food") or data.get("name") or "unknown"
-            ingredients = data.get("ingredients", [])
-            
-            logger.info(f"AI Detection: {food_name}")
-            return {"name": food_name, "ingredients": ingredients}
-            
-    except Exception as e:
-        logger.error(f"Gemini API Error: {e}")
+    # 🚀 SMART MODEL PICKER
+    # We try Flash (Fastest), then Pro (Stable), then Vision (Legacy)
+    models_to_try = [
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+        "gemini-pro-vision"
+    ]
     
+    last_error = None
+    
+    for model_name in models_to_try:
+        try:
+            logger.info(f"Attempting detection with model: {model_name}")
+            model = genai.GenerativeModel(model_name)
+            
+            # Prepare image blob
+            image_part = {
+                "mime_type": "image/jpeg",
+                "data": image_bytes
+            }
+            
+            prompt = """
+            Identify the primary food item in this image.
+            Return a JSON object with:
+            1. "food": Concise food name (e.g. "Strawberry Bowl", "Cheeseburger").
+            2. "ingredients": List of 5-10 visible or likely ingredients.
+            
+            If it's not food, return {"food": "unknown", "ingredients": []}.
+            """
+            
+            # Use JSON mode if the model is modern, else use text parsing
+            gen_config = {"response_mime_type": "application/json"} if "1.5" in model_name else None
+            
+            response = await model.generate_content_async(
+                [prompt, image_part],
+                generation_config=gen_config
+            )
+            
+            if response.text:
+                # Robust parsing for both JSON mode and text mode models
+                json_str = response.text.strip()
+                # If legacy model wraps in ```json ... ```
+                if "```" in json_str:
+                    json_str = re.search(r"({.*})", json_str, re.DOTALL).group(1)
+                
+                data = json.loads(json_str)
+                food_name = data.get("food") or data.get("name") or "unknown"
+                ingredients = data.get("ingredients", [])
+                
+                logger.info(f"✅ Success with {model_name}: {food_name}")
+                return {"name": food_name, "ingredients": ingredients}
+                
+        except Exception as e:
+            last_error = str(e)
+            logger.warning(f"Model {model_name} failed: {e}")
+            continue # Try next model
+            
+    logger.error(f"All Gemini models failed. Last error: {last_error}")
     return {"name": "unknown", "ingredients": []}
 
 @router.post("/analyze", response_model=FoodAnalysisResult)
