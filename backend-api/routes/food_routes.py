@@ -41,11 +41,13 @@ async def detect_food_from_image(image_bytes: bytes) -> dict:
         return {"name": "unknown", "ingredients": []}
 
     # 🚀 SMART MODEL PICKER
-    # We try Flash (Fastest), then Pro (Stable), then Vision (Legacy)
+    # We try different naming conventions to bypass SDK v1beta lookup errors
     models_to_try = [
         "gemini-1.5-flash",
         "gemini-1.5-pro",
-        "gemini-pro-vision"
+        "models/gemini-1.5-flash", 
+        "models/gemini-1.5-pro",
+        "models/gemini-pro-vision"
     ]
     
     last_error = None

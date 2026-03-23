@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 10080
     USDA_API_KEY: str = "DEMO_KEY"
-    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000,https://foodlytics-help.vercel.app,https://foodlytics-help.onrender.com"
 
     @property
     def cors_origins_list(self) -> List[str]:
